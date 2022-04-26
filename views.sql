@@ -26,6 +26,6 @@ join player pl on pl.player_id = pay.player_id;
 
 
 CREATE OR REPLACE VIEW FIXTURE_SCHEDULE AS
-select fx.match_id, fx.team1_id, fx.team2_id,vn.venue_name, fx.match_date, fx.league_id
+select fx.match_id, fx.team1_id, fx.team2_id,vn.venue_name,vn.city, fx.match_date, fx.league_id
 from fixture fx join venue vn on fx.venue_id = vn.venue_id;
 
