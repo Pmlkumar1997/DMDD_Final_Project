@@ -222,3 +222,41 @@ open l_cursor for
 RETURN l_cursor;
 END;
 
+
+------------------------------------------------------------------------------------------------------------------------------
+--Function to get the details of matches played by each team in the league
+
+--SET SERVEROUTPUT ON;
+--variable fixts refcursor;
+--EXECUTE :fixts := getTeamFixtures('RCB',1006);
+--print :fixts;
+------------------------------------------------------------------------------------------------------------------------------
+
+create or replace FUNCTION getTeamFixtures(teamid VARCHAR2, league_num NUMBER)
+RETURN sys_refcursor AS
+l_cursor sys_refcursor;
+BEGIN
+if teamid is null or league_num is null
+then
+    dbms_output.put_line('Input cannot be empty');
+end if;
+if (teamid NOT IN ('RCB','CSK','DC','KXIP','BCCI','KKR','MI','RR','SRH'))
+then
+    dbms_output.put_line('Enter team id in RCB/CSK/DC/KXIP/BCCI/KKR/MI/RR/SRH');
+end if;
+if not (league_num between 1000 and 1006)
+then
+    dbms_output.put_line('Please enter a league id between 1001 and 1006');
+end if;
+if league_num NOT IN (1005,1006)
+then
+    dbms_output.put_line('Fixture Information not available for this league');
+end if;
+  open l_cursor for 
+    select  match_date ,team1_id, team2_id, winner,win_details from fixture
+    where (team1_id = teamid or team2_id = teamid) and league_id = league_num;
+return l_cursor;
+
+END;
+/
+
