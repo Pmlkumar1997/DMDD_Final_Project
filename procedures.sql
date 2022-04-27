@@ -52,4 +52,39 @@ ELSE
     dbms_output.put_line('Player is currently unavailable and not participating in the league');
 END IF;
 END;
+/
+
+--procedure to delete user account
+CREATE OR REPLACE PROCEDURE deleteUserAccount(user_num NUMBER)
+AS
+v_username VARCHAR2(30);
+v_user_id NUMBER;
+v_min_id NUMBER :=0;
+v_max_id NUMBER :=0;
+
+BEGIN
+IF user_num is null or user_num = ''
+then
+    dbms_output.put_line('User id cannot be empty');
+    return;
+end if;
+select min(user_id),max(user_id) into v_min_id, v_max_id from user_account;
+IF user_num NOT between v_min_id and v_max_id
+then
+    dbms_output.put_line('User does not exist in database..Enter id between '||v_min_id||' and '||v_max_id);
+    return;
+end if;
+dbms_output.put_line(user_num);
+select username into v_username from user_account where user_id = user_num;
+dbms_output.put_line(v_username);
+
+delete from user_account where user_id = v_user_id;
+commit;
+
+dbms_output.put_line('User deleted successfully');
+exception
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('User not found.');
+END;
+/
 
