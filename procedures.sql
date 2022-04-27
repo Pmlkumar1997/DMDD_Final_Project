@@ -61,6 +61,9 @@ THEN
 ELSE
     dbms_output.put_line('Player is currently unavailable and not participating in the league');
 END IF;
+exception
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('Player ' || player_nm || ' not found.');
 END;
 /
 
