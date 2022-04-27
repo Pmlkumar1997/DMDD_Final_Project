@@ -16,6 +16,10 @@ if (v_team_id = '' or v_team_id is null)
 then
     dbms_output.put_line('Team id cannot be empty');
 end if;
+if (v_team_id NOT IN ('RCB','CSK','DC','KXIP','BCCI','KKR','MI','RR','SRH'))
+then
+    dbms_output.put_line('Enter team id in RCB/CSK/DC/KXIP/BCCI/KKR/MI/RR/SRH');
+end if;
   open l_cursor for 
     select player_name,player_role,player_type, bid_amount
     from TEAM_PLAYER
@@ -43,6 +47,10 @@ if (match_nm = '' or match_nm is null)
 then
     dbms_output.put_line('Match id cannot be empty');
 end if; 
+if not (match_nm between 900 and 927)
+then
+    dbms_output.put_line('Enter match id between 900 and 928 to get bookings');
+end if;
 select count(booking_id) INTO v_bookings
 from fixture_bookings 
 where match_id = match_nm
@@ -71,6 +79,10 @@ if (match_nm = '' or match_nm is null)
 then
     dbms_output.put_line('Match id cannot be empty');
 end if; 
+if not (match_nm between 900 and 927)
+then
+    dbms_output.put_line('Enter match id between 900 and 928 to get bookings');
+end if;
 select sum(ticket_count) INTO v_bookings
 from fixture_bookings 
 where match_id = match_nm
@@ -94,6 +106,14 @@ CREATE OR REPLACE FUNCTION fixture_ticket_type_sold(tick_type VARCHAR2)
 RETURN sys_refcursor AS
 l_cursor sys_refcursor;
 begin
+if tick_type is null or tick_type = ''
+then
+    dbms_output.put_line('Ticket type cannot be empty');
+end if;
+if tick_type not in ('GOLD','SILVER','PLATINUM')
+then
+    dbms_output.put_line('select a ticket type in silver/gold/platinum');
+end if;
   open l_cursor for 
     select sum(ticket_count) as num_tickets, match_id,team1_id,team2_id, ticket_type 
     from fixture_bookings where UPPER(ticket_type) = UPPER(tick_type)
@@ -118,6 +138,15 @@ RETURN sys_refcursor AS
 l_cursor sys_refcursor;
 v_league_nm VARCHAR2(30) := replace(initcap(league_nm),' ');
 begin
+begin
+if league_nm is null or league_nm = ''
+then
+    dbms_output.put_line('League name cannot be null');
+end if;
+if v_league_nm not in ('VivoIPL 2021','VivoIPL 2020')
+then
+    dbms_output.put_line('Please enter valid league name');
+end if;
 dbms_output.put_line(league_nm);
   open l_cursor for 
     select match_id,team1_id,team2_id,match_date,venue_name,city from FIXTURE_SCHEDULE
@@ -142,7 +171,14 @@ RETURN NUMBER
 AS 
     v_league_revenue NUMBER(10);
 BEGIN
-
+if league_nm is null or league_nm = ''
+then
+    dbms_output.put_line('League name cannot be null');
+end if;
+if league_nm not in ('VivoIPL 2021','VivoIPL 2020')
+then
+    dbms_output.put_line('Please enter valid league name');
+end if;
 select sum(revenue) INTO v_league_revenue from (select fx.match_id as match_id, SUM(fx.ticket_count*tc.ticket_price) as revenue from ADMIN.fixture_bookings fx
 join ADMIN.ticket_class tc on fx.ticket_type = tc.ticket_type
 where league_id = (select league_id from league where league_name = league_nm )
@@ -170,6 +206,14 @@ BEGIN
 if team_id is null or league_nm is null
 then
     dbms_output.put_line('Input cannot be empty');
+end if;
+if (team_id NOT IN ('RCB','CSK','DC','KXIP','BCCI','KKR','MI','RR','SRH'))
+then
+    dbms_output.put_line('Enter team id in RCB/CSK/DC/KXIP/BCCI/KKR/MI/RR/SRH');
+end if;
+if v_league_nm not in ('VivoIPL 2021','VivoIPL 2020')
+then
+    dbms_output.put_line('Please enter valid league name');
 end if;
 open l_cursor for 
     select venue_name,count(winner) from venue_winner 
