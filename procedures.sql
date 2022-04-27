@@ -1,4 +1,9 @@
+------------------------------------------------------------------------------------------------------------------------------
 --procedure to get the player information
+
+--SET SERVEROUTPUT ON;
+--EXECUTE get_player_info('AmbatiRayudu');
+------------------------------------------------------------------------------------------------------------------------------
 
 create or replace procedure get_player_info ( player_nm VARCHAR2 )
 IS
@@ -31,7 +36,12 @@ exception
 end;
 /
 
+------------------------------------------------------------------------------------------------------------------------------
 --procedure to check if a player is participating the league
+
+--SET SERVEROUTPUT ON;
+--EXECUTE playerAvailability('AmabatiRayudu');
+------------------------------------------------------------------------------------------------------------------------------
 
 CREATE OR REPLACE PROCEDURE playerAvailability(player_nm VARCHAR2)
 AS
@@ -54,7 +64,14 @@ END IF;
 END;
 /
 
---procedure to delete user account
+------------------------------------------------------------------------------------------------------------------------------
+--Procedure to delete a user account - Admin can delete the users by using their user_id
+--This procedure can be used to demonstrate the use of triggers deletePlayerAccount,deleteOwnerAccount,deleteAudienceAccount
+
+--SET SERVEROUTPUT ON;
+--EXECUTE deleteUserAccount(1);
+------------------------------------------------------------------------------------------------------------------------------
+
 CREATE OR REPLACE PROCEDURE deleteUserAccount(user_num NUMBER)
 AS
 v_username VARCHAR2(30);
