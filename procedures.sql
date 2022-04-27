@@ -105,3 +105,95 @@ exception
 END;
 /
 
+------------------------------------------------------------------------------------------------------------------------------
+--procedure to check if a player is sold out
+
+--SET SERVEROUTPUT ON;
+--EXECUTE isPlayerSold('DWAINEPRETORIUS');
+------------------------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE isPlayerSold(player_nm VARCHAR2)
+AS
+v_player_count VARCHAR2(30);
+v_player_nm VARCHAR2(30):= replace(initcap(player_nm),' ');
+v_player_name VARCHAR2(30);
+BEGIN
+if (player_nm is null or player_nm = '')
+THEN
+    dbms_output.put_line('Player name cannot be empty');
+    RETURN;
+END IF;
+select count(player_name) into v_player_count 
+from player where replace(initcap(player_name),' ') = v_player_nm and team_id = 'BCCI';
+
+if (v_player_count = 1)
+THEN 
+    dbms_output.put_line('Player is available for bidding');
+ELSE
+    dbms_output.put_line('Player is aleady sold out');
+END IF;
+exception
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('Player ' || player_nm || ' not found.');
+END;
+/
+
+------------------------------------------------------------------------------------------------------------------------------
+--procedure to place a new bid on a player
+
+--SET SERVEROUTPUT ON;
+--EXECUTE placeBid('SHIMRONHETMEYER','SharukhKhan',12230000,1006);
+------------------------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE placeBid(player_nm VARCHAR2, owner_nm VARCHAR2, bid_amnt NUMBER, league_num NUMBER)
+AS
+v_base_price NUMBER := 0;
+v_team_id VARCHAR2(10);
+v_max_bid_id NUMBER:=0;
+v_allotted_amount NUMBER := 0;
+v_player_id NUMBER := 0;
+v_owner_id NUMBER := 0;
+BEGIN
+
+if (player_nm = '' or player_nm is null or owner_nm = '' or owner_nm is null or league_num = '' or league_num is null)
+then
+    dbms_output.put_line('player/owner/league id cannot be empty');
+    return;
+end if;
+if not (league_num between 1000 and 1006)
+then
+    dbms_output.put_line('Please enter a league id between 1001 and 1006');
+    return;
+end if;
+if (league_num != 1006)
+then
+    dbms_output.put_line('Bid Information not available for this league');
+    return;
+end if;
+
+select base_price, team_id,player_id INTO v_base_price, v_team_id,v_player_id from player where replace(initcap(player_name),' ') = replace(initcap(player_nm),' ');
+select alloted_amount,owner_id INTO v_allotted_amount,v_owner_id from team_owner where replace(initcap(owner_name),' ') = replace(initcap(owner_nm),' ');
+if (v_base_price>bid_amnt)
+then
+    dbms_output.put_line('Bid amount cannot be less than base price of the player');
+    return;
+end if;
+if (v_allotted_amount<bid_amnt)
+then
+    dbms_output.put_line('You cannot place a bid greater than the allotted amount');
+    return;
+end if;
+if (v_team_id!='BCCI')
+then
+    dbms_output.put_line('Player is already sold to another team');
+    return;
+end if;
+
+SELECT MAX(bid_id) INTO v_max_bid_id FROM bid;
+INSERT INTO BID values (v_max_bid_id+1,v_owner_id,v_player_id,sysdate,'F',bid_amnt,league_num);
+COMMIT;
+exception
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('Player or owner not found.');
+END;
+/
