@@ -102,3 +102,25 @@ group by match_id);
 
 RETURN v_league_revenue;
 END;
+
+
+
+--Function to get the number of wins in each venue of a team
+
+CREATE OR REPLACE FUNCTION team_venue_wins(team_id VARCHAR2, league_nm VARCHAR)
+RETURN sys_refcursor
+AS
+v_league_nm VARCHAR2(30):= replace(initcap(league_nm),' ');
+l_cursor sys_refcursor;
+BEGIN
+if team_id is null or league_nm is null
+then
+    dbms_output.put_line('Input cannot be empty');
+end if;
+open l_cursor for 
+    select venue_name,count(winner) from venue_winner 
+    where winner = team_id and replace(initcap(league_name),' ') = v_league_nm 
+    group by venue_name;
+RETURN l_cursor;
+END;
+
