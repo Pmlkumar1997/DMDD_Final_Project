@@ -345,14 +345,14 @@ COMMIT;
 
 
 -- insert team values into team table.
-INSERT INTO admin.Team VALUES ('CSK', 201, 'MumbaiIndians',  'Wankhede' );
+INSERT INTO admin.Team VALUES ('MI', 201, 'MumbaiIndians',  'Wankhede' );
 INSERT INTO admin.Team VALUES ('RCB', 206, 'RoyalChallengersBangalore',  'Chinnaswamy' );
-INSERT INTO admin.Team VALUES ('RR', 202, 'SunrisersHyderabad',  'Rajiv Gandhi' );
-INSERT INTO admin.Team VALUES ('KXIP',203, 'KolkataKnightRiders',  'Eden Gardens' );
-INSERT INTO admin.Team VALUES ('KKR',204, 'RajasthanRoyals',  'Sawai Mansingh' );
-INSERT INTO admin.Team VALUES ('SRH',205, 'KingsXIPunjab',  'PCA Stadium' );
-INSERT INTO admin.Team VALUES ('DC',200, 'ChennaiSuperKings',  'M. A. Chidambaram' );
-INSERT INTO admin.Team VALUES ('MI',207, 'DelhiCapitals',  'Arun Jaitley' );
+INSERT INTO admin.Team VALUES ('SRH', 202, 'SunrisersHyderabad',  'Rajiv Gandhi' );
+INSERT INTO admin.Team VALUES ('KKR',203, 'KolkataKnightRiders',  'Eden Gardens' );
+INSERT INTO admin.Team VALUES ('RR',204, 'RajasthanRoyals',  'Sawai Mansingh' );
+INSERT INTO admin.Team VALUES ('KXIP',205, 'KingsXIPunjab',  'PCA Stadium' );
+INSERT INTO admin.Team VALUES ('CSK',200, 'ChennaiSuperKings',  'M. A. Chidambaram' );
+INSERT INTO admin.Team VALUES ('DC',207, 'DelhiCapitals',  'Arun Jaitley' );
 INSERT INTO admin.Team VALUES('BCCI', 208, 'TeamBCCI', 'Chairman of BCCI');
 COMMIT;
 
