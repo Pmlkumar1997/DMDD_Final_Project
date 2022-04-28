@@ -200,3 +200,30 @@ exception
       DBMS_OUTPUT.PUT_LINE('Player or owner not found.');
 END;
 /
+
+------------------------------------------------------------------------------------------------------------------------------
+--Procedure to get the winner of the league
+--SET SERVEROUTPUT ON;
+--EXECUTE leagueWinner('Vivo IPL 2020');
+------------------------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE leagueWinner(league_nm VARCHAR2)
+AS
+v_league_nm VARCHAR2(30) := replace(initcap(league_nm),' ');
+v_team_id VARCHAR2(10);
+BEGIN
+if league_num is null or league_num = ''
+then
+    dbms_output.put_line('League name cannot be null');
+    return;
+end if;
+select team_id into v_team_id from team_standings where league_id = (select league_id from league where replace(initcap(league_name),' ') = v_league_nm)
+order by points desc fetch first row only;
+
+dbms_output.put_line(v_team_id || ' won ' || league_nm);
+exception
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('League info found.');
+END;
+/
+
