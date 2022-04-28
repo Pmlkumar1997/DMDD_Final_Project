@@ -150,7 +150,7 @@ end if;
 dbms_output.put_line(league_nm);
   open l_cursor for 
     select match_id,team1_id,team2_id,match_date,venue_name,city from FIXTURE_SCHEDULE
-    where league_id = (select league_id from league where (replace(initcap(league_name),' ')) = v_league_nm);
+    where league_id = (select league_id from league where (replace(initcap(league_name),' ')) = v_league_nm) order by match_id;
   return l_cursor;
 
 END;
@@ -160,32 +160,40 @@ END;
 --function to get the revenue generated in the whole league
 --Inserted information for vivo ipl 2020, vivo ipl 2021
 
---SET SERVEROUTPUT ON;
---variable league_rev NUMBER(10);
---EXECUTE :league_rev := league_revenue('Vivo IPL 2021');
---print :league_rev;
+SET SERVEROUTPUT ON;
+variable l_rev NUMBER;
+EXECUTE :l_rev := league_revenue(1006);
+print :l_rev;
 ------------------------------------------------------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION league_revenue(league_nm IN VARCHAR2)
+CREATE OR REPLACE FUNCTION league_revenue(league_num IN NUMBER)
 RETURN NUMBER
 AS 
-    v_league_revenue NUMBER(10);
+    v_league_revenue NUMBER(10):=0;
+    v_min_id NUMBER:=0;
+    v_max_id NUMBER:=0;
 BEGIN
-if league_nm is null or league_nm = ''
+select min(league_id),max(league_id) INTO v_min_id, v_max_id from league;
+if league_num is null or league_num = ''
 then
     dbms_output.put_line('League name cannot be null');
 end if;
-if league_nm not in ('VivoIPL 2021','VivoIPL 2020')
+if not league_num between v_min_id and v_max_id
 then
-    dbms_output.put_line('Please enter valid league name');
+    dbms_output.put_line('Please enter a league number between ' || v_min_id || 'and' || v_max_id);
 end if;
 select sum(revenue) INTO v_league_revenue from (select fx.match_id as match_id, SUM(fx.ticket_count*tc.ticket_price) as revenue from ADMIN.fixture_bookings fx
 join ADMIN.ticket_class tc on fx.ticket_type = tc.ticket_type
-where league_id = (select league_id from league where league_name = league_nm )
+where league_id = league_num
 group by match_id);
 
 RETURN v_league_revenue;
+exception
+    WHEN NO_DATA_FOUND
+    THEN
+        dbms_output.put_line('No Such League');
 END;
+/
 
 -----------------------------------------------------------------------------------------------------------------------------
 --Function to get the number of wins in each venue of a team
