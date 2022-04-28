@@ -227,3 +227,58 @@ exception
 END;
 /
 
+----------------------------------------------------------------------------------------
+--Procedure to add a new player into the player table
+--For the player to get added to user account must be created
+--Used max id +1 as player_id
+
+--SET SERVEROUTPUT ON;
+--EXECUTE addNewPlayer('ArjunTendulkar','Arjun','DOMESTIC','BOWLER','INDIA');
+------------------------------------------------------------------------------------------
+
+create or replace PROCEDURE addNewPlayer(
+player_nm IN VARCHAR2, 
+user_name IN VARCHAR2,   
+v_player_type IN VARCHAR2, 
+v_player_role IN VARCHAR2, 
+v_country IN VARCHAR2)
+AS
+v_user_id NUMBER(10);
+v_max_player_id NUMBER(10);
+v_user_count NUMBER(10);
+v_player_count NUMBER(10);
+--v_player_nm VARCHAR2(30) := replace(initcap(player_nm));
+BEGIN
+if player_nm is null or user_name is null  or v_player_type is null or v_player_role is null or v_country is null
+then
+    dbms_output.put_line('Any field cannot be empty');
+    return;
+end if;
+select user_id into v_user_id from user_account where username = user_name;
+select count(user_id) into v_user_count from user_account where username = user_name;
+--if v_user_id is null
+--then 
+   -- dbms_output.put_line('create a user account first');
+   -- return;
+--end if;
+if v_user_count = 0
+then 
+    dbms_output.put_line('User Account does not exist');
+    return;
+end if;
+select count(player_id) into v_player_count from player where replace(initcap(player_name),'') = replace(initcap(player_nm),'');
+if v_user_count > 0
+then 
+    dbms_output.put_line('Player already exist');
+    return;
+end if;
+select max(player_id) into v_max_player_id from player;
+
+INSERT INTO player values(v_max_player_id+1, v_user_id, 'BCCI', player_nm, DEFAULT, v_player_type, v_player_role, v_country);
+EXCEPTION
+WHEN NO_DATA_FOUND
+THEN
+        dbms_output.put_line('Player not found in user account');
+
+END;
+/
